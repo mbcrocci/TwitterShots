@@ -1,24 +1,24 @@
 package main
 
 import (
-	"net/http"
-	"fmt"
 	"io/ioutil"
+
+	"github.com/go-martini/martini"
 )
 
 func main() {
-	http.HandleFunc("/", MyHandler)
-	http.ListenAndServe(":4747", nil)
-}
-
-func MyHandler(rw http.ResponseWriter, req *http.Request) {
+	m := martini.Classic()
 	page := loadPage("index")
-	fmt.Fprintln(rw, string(page.Body))
+
+	m.Get("/", func() string {
+		return string(page.Body)
+	})
+	m.Run()
 }
 
 type Page struct {
 	Title string
-	Body []byte
+	Body  []byte
 }
 
 func loadPage(title string) *Page {
